@@ -14,9 +14,9 @@ describe('Department', () => {
   const shouldFail = async (field, badValues = []) => {
     for (let i = 0; i < badValues.length; i++) {
       departmentData[field] = badValues[i];
-      const newEmployee = new Department(departmentData);
+      const newDepartment = new Department(departmentData);
 
-      await expect(newEmployee.validate()).rejects.toThrowError();
+      await expect(newDepartment.validate()).rejects.toThrowError();
     }
   };
 
