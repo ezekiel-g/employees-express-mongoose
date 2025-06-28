@@ -17,6 +17,8 @@ jest.mock('../../util/handleDbError.js');
 describe('createCrudRouter', () => {
   let app;
   let model;
+  const requestBody = { name: 'Michael', city: 'New York' };
+  const document = { _id: 1, name: 'Michael', city: 'New York' };
 
   beforeAll(() => {
     model = jest.fn();
@@ -37,24 +39,27 @@ describe('createCrudRouter', () => {
   afterAll(() => console.error.mockRestore());
 
   it('returns 200 and all documents on GET /', async () => {
-    const mockDocuments = [{ name: 'Michael' }, { name: 'Sarah' }];
-    model.find.mockResolvedValue(mockDocuments);
+    const documents = [
+      document,
+      { id: 2, name: 'Mary', city: 'San Francisco' },
+    ];
+
+    model.find.mockResolvedValue(documents);
 
     const response = await request(app).get('/api/v1/users');
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(mockDocuments);
-    expect(model.find).toHaveBeenCalledWith();
+    expect(response.body).toEqual(documents);
+    expect(model.find).toHaveBeenCalled();
   });
 
   it('returns 200 and specific document on GET /:id', async () => {
-    const mockDocument = { name: 'Michael' };
-    model.findById.mockResolvedValue(mockDocument);
+    model.findById.mockResolvedValue(document);
 
     const response = await request(app).get('/api/v1/users/1');
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual([mockDocument]);
+    expect(response.body).toEqual([document]);
     expect(model.findById).toHaveBeenCalledWith('1');
   });
 
@@ -69,30 +74,25 @@ describe('createCrudRouter', () => {
   });
 
   it('returns 201 and new document on POST /', async () => {
-    const requestBody = { name: 'Michael', city: 'New York' };
-    const savedDocument = { _id: '1', name: 'Michael', city: 'New York' };
-
-    const mockSave = jest.fn().mockResolvedValue(savedDocument);
+    const mockSave = jest.fn().mockResolvedValue(document);
     model.mockImplementation(() => ({ save: mockSave }));
 
     const response = await request(app).post('/api/v1/users').send(requestBody);
 
     expect(response.status).toBe(201);
-    expect(response.body).toEqual([savedDocument]);
+    expect(response.body).toEqual([document]);
     expect(mockSave).toHaveBeenCalled();
   });
 
   it('returns 200 and updated document on PATCH /:id', async () => {
-    const requestBody = { name: 'Michael', city: 'New York' };
-    const updatedDocument = { _id: '1', name: 'Michael', city: 'New York' };
-    model.findByIdAndUpdate.mockResolvedValue(updatedDocument);
+    model.findByIdAndUpdate.mockResolvedValue(document);
 
     const response = await request(app)
       .patch('/api/v1/users/1')
       .send(requestBody);
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual([updatedDocument]);
+    expect(response.body).toEqual([document]);
     expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
       '1',
       { $set: requestBody },
@@ -101,7 +101,6 @@ describe('createCrudRouter', () => {
   });
 
   it('returns 404 when no document found on PATCH /:id', async () => {
-    const requestBody = { name: 'Michael', city: 'New York' };
     model.findByIdAndUpdate.mockResolvedValue(null);
 
     const response = await request(app)
@@ -118,8 +117,7 @@ describe('createCrudRouter', () => {
   });
 
   it('returns 200 and deletes document on DELETE /:id', async () => {
-    const deletedDocument = { _id: '1', name: 'Michael' };
-    model.findByIdAndDelete.mockResolvedValue(deletedDocument);
+    model.findByIdAndDelete.mockResolvedValue(document);
 
     const response = await request(app).delete('/api/v1/users/1');
 
@@ -144,10 +142,7 @@ describe('createCrudRouter', () => {
     model.find.mockRejectedValueOnce(error);
 
     handleDbError.mockImplementation(
-      (response) =>
-        response
-          .status(500)
-          .json(['error']),
+      (response) => response.status(500).json(['error']),
     );
 
     await request(app).get('/api/v1/users');
