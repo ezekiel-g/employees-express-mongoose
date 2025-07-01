@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
+import { connectToDatabase } from './api/v1/db/dbConnection.js';
 import createCrudRouter from './api/v1/factories/createCrudRouter.js';
 import Department from './api/v1/models/Department.js';
 import Employee from './api/v1/models/Employee.js';
@@ -23,9 +23,7 @@ app.use('/api/v1/employees', createCrudRouter(Employee));
 
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.DB_URI);
-    console.log('Connected to MongoDB');
-
+    await connectToDatabase();
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   } catch (error) {
     console.error('Error connecting to MongoDB:', error.message);
