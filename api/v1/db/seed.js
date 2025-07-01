@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { connectToDatabase, disconnectFromDatabase } from './dbConnection.js';
+import { connectToDatabase, disconnectFromDatabase } from './db.js';
 import Department from '../models/Department.js';
 import Employee from '../models/Employee.js';
 
