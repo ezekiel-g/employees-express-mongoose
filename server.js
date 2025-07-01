@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import { connectToDatabase } from './api/v1/db/dbConnection.js';
+import { connectToDatabase } from './api/v1/db/db.js';
 import createCrudRouter from './api/v1/factories/createCrudRouter.js';
 import Department from './api/v1/models/Department.js';
 import Employee from './api/v1/models/Employee.js';
