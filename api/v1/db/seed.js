@@ -57,7 +57,8 @@ const seedDatabase = async () => {
 
     if (departments.length !== departmentData.length) {
       console.error(
-        'Exiting (number of departments created differs from expected number)',
+        'Exiting... (number of departments ' +
+        'created differs from expected number)',
       );
       return;
     }
