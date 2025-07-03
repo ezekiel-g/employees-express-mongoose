@@ -1,7 +1,7 @@
 import express from 'express';
 import handleDbError from '../util/handleDbError.js';
 
-const createCrudRouter = (model) => {
+const crudEndpoints = (model) => {
   const router = express.Router();
 
   router.get('/', async (request, response) => {
@@ -68,4 +68,4 @@ const createCrudRouter = (model) => {
   return router;
 };
 
-export default createCrudRouter;
+export default crudEndpoints;
