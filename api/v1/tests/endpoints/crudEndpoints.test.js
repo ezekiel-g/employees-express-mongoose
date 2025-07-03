@@ -9,12 +9,12 @@ import {
 } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
-import createCrudRouter from '../../factories/createCrudRouter.js';
+import crudEndpoints from '../../endpoints/crudEndpoints.js';
 import handleDbError from '../../util/handleDbError.js';
 
 jest.mock('../../util/handleDbError.js');
 
-describe('createCrudRouter', () => {
+describe('crudEndpoints', () => {
   let app;
   let model;
   const requestBody = { name: 'Michael', city: 'New York' };
@@ -29,7 +29,7 @@ describe('createCrudRouter', () => {
 
     app = express();
     app.use(express.json());
-    app.use('/api/v1/users', createCrudRouter(model));
+    app.use('/api/v1/users', crudEndpoints(model));
 
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
